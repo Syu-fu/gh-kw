@@ -75,7 +75,10 @@ func (cli *Cli) Run() int {
 		return 1
 	}
 
-	fmt.Println(sr)
+	// Sort search results by search count in descending order.
+	sortedResults := SortSearchResults(sr)
+
+	fmt.Println(sortedResults)
 
 	return 0
 }
