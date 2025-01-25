@@ -78,7 +78,8 @@ func (cli *Cli) Run() int {
 	// Sort search results by search count in descending order.
 	sortedResults := SortSearchResults(sr)
 
-	fmt.Println(sortedResults)
+	// Output search results in a table.
+	Output(sortedResults, cli.OutStream)
 
 	return 0
 }
