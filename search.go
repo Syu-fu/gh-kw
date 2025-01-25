@@ -10,8 +10,8 @@ import (
 
 // SearchResult represents the result of a search.
 type SearchResult struct {
-	searchWord  string
-	searchCount int
+	SearchWord  string
+	SearchCount int
 }
 
 // query is a GraphQL query for searching repositories.
@@ -52,8 +52,8 @@ func fetchSearchResults(client *api.GraphQLClient, searchWords []string) ([]Sear
 	// Process each search word and map the results.
 	for _, searchWord := range searchWords {
 		results = append(results, SearchResult{
-			searchWord:  searchWord,
-			searchCount: q.Search.RepositoryCount,
+			SearchWord:  searchWord,
+			SearchCount: q.Search.RepositoryCount,
 		})
 	}
 

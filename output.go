@@ -11,7 +11,7 @@ func Output(searchResults []SearchResult, outstream io.Writer) {
 	// markdown table format
 	data := make([][]string, len(searchResults))
 	for i, result := range searchResults {
-		data[i] = []string{strconv.Itoa(i + 1), result.searchWord, strconv.Itoa(result.searchCount)}
+		data[i] = []string{strconv.Itoa(i + 1), result.SearchWord, strconv.Itoa(result.SearchCount)}
 	}
 
 	tw := tablewriter.NewWriter(outstream)

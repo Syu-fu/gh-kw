@@ -9,7 +9,7 @@ func SortSearchResults(searchResults []SearchResult) []SearchResult {
 	}
 	for i := 0; i < len(copied); i++ {
 		for j := i + 1; j < len(copied); j++ {
-			if copied[i].searchCount < copied[j].searchCount {
+			if copied[i].SearchCount < copied[j].SearchCount {
 				copied[i], copied[j] = copied[j], copied[i]
 			}
 		}
