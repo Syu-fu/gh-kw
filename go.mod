@@ -4,6 +4,8 @@ go 1.22.8
 
 require github.com/cli/go-gh/v2 v2.11.2
 
+require github.com/shurcooL/graphql v0.0.0-20230722043721-ed46e5a46466
+
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/cli/safeexec v1.0.0 // indirect
