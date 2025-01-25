@@ -1,2 +1,4 @@
 /gh-kw
 /gh-kw.exe
+# Added by goreleaser init:
+dist/
