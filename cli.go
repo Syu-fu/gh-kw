@@ -20,6 +20,7 @@ type CliArgs struct {
 	ShowHelp    bool
 	ShowVersion bool
 	SearchWords []string
+	Language    string
 }
 
 // ParseArgs parses command-line arguments.
@@ -31,6 +32,7 @@ func ParseArgs(args []string) (CliArgs, error) {
 	flags.BoolVar(&cliArgs.ShowHelp, "help", false, "Show help message")
 	flags.BoolVar(&cliArgs.ShowVersion, "v", false, "Show version")
 	flags.BoolVar(&cliArgs.ShowVersion, "version", false, "Show version")
+	flags.StringVar(&cliArgs.Language, "language", "", "Language to search")
 
 	if err := flags.Parse(args); err != nil {
 		// nolint: wrapcheck
@@ -69,7 +71,7 @@ func (cli *Cli) Run() int {
 
 	searchWords := cliArgs.SearchWords
 
-	sr, err := Search(searchWords)
+	sr, err := Search(searchWords, cliArgs.Language)
 	if err != nil {
 		fmt.Fprintf(cli.ErrStream, "Error: %s\n", err)
 		return 1
@@ -91,6 +93,7 @@ func (cli *Cli) usage() {
 Options:
   -h, --help       Show help message
   -v, --version    Show version
+  --language       Add language to search term.
 
 Arguments:
   search_word...  Names of the search words

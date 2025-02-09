@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cli/go-gh/v2/pkg/api"
 	graphql "github.com/shurcooL/graphql"
@@ -18,44 +17,52 @@ type SearchResult struct {
 type query struct {
 	Search struct {
 		RepositoryCount int
-	} `graphql:"search(query: $search, type: REPOSITORY, first:100)"`
+	} `graphql:"search(query: $search, type: REPOSITORY, first: 1)"`
 }
 
 // Search searches for repositories with the given search words.
-func Search(searchWords []string) ([]SearchResult, error) {
+func Search(searchWords []string, language string) ([]SearchResult, error) {
 	client, err := api.DefaultGraphQLClient()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a GraphQL client: %w", err)
 	}
 
-	return fetchSearchResults(client, searchWords)
-}
-
-// fetchSearchResults fetches search results from the GitHub API.
-func fetchSearchResults(client *api.GraphQLClient, searchWords []string) ([]SearchResult, error) {
 	var results []SearchResult
 
-	// Create the search query string by joining the searchWords with commas or 'OR' (depending on needs).
-	joinedSearchWords := strings.Join(searchWords, " ")
-
-	variables := map[string]interface{}{
-		"search": graphql.String(joinedSearchWords),
-	}
-
-	var q query
-
-	err := client.Query("searchCount", &q, variables)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch search counts: %w", err)
-	}
-
-	// Process each search word and map the results.
+	// Each search word is searched for individually.
 	for _, searchWord := range searchWords {
+		count, err := fetchSearchCount(client, searchWord, language)
+		if err != nil {
+			return nil, err
+		}
+
 		results = append(results, SearchResult{
 			SearchWord:  searchWord,
-			SearchCount: q.Search.RepositoryCount,
+			SearchCount: count,
 		})
 	}
 
 	return results, nil
+}
+
+// fetchSearchCount fetches repository count for a single search word.
+func fetchSearchCount(client *api.GraphQLClient, searchWord string, language string) (int, error) {
+	// Add language filter if specified.
+	searchQuery := searchWord
+	if language != "" {
+		searchQuery += fmt.Sprintf(" language:%s", language)
+	}
+
+	var q query
+
+	variables := map[string]interface{}{
+		"search": graphql.String(searchQuery),
+	}
+
+	err := client.Query("searchCount", &q, variables)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch search count for '%s': %w", searchWord, err)
+	}
+
+	return q.Search.RepositoryCount, nil
 }
