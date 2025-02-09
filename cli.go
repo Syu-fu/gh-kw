@@ -8,7 +8,7 @@ import (
 )
 
 // version is the current version of the CLI.
-var version string = "0.1.0"
+var version string
 
 // Cli represents the command-line interface.
 type Cli struct {
