@@ -18,28 +18,33 @@ type SearchResult struct {
 type query struct {
 	Search struct {
 		RepositoryCount int
-	} `graphql:"search(query: $search, type: REPOSITORY, first:100)"`
+	} `graphql:"search(query: $search, type: REPOSITORY, first: 100)"`
 }
 
 // Search searches for repositories with the given search words.
-func Search(searchWords []string) ([]SearchResult, error) {
+func Search(searchWords []string, language string) ([]SearchResult, error) {
 	client, err := api.DefaultGraphQLClient()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a GraphQL client: %w", err)
 	}
 
-	return fetchSearchResults(client, searchWords)
+	return fetchSearchResults(client, searchWords, language)
 }
 
 // fetchSearchResults fetches search results from the GitHub API.
-func fetchSearchResults(client *api.GraphQLClient, searchWords []string) ([]SearchResult, error) {
+func fetchSearchResults(client *api.GraphQLClient, searchWords []string, language string) ([]SearchResult, error) {
 	var results []SearchResult
 
-	// Create the search query string by joining the searchWords with commas or 'OR' (depending on needs).
+	// Construct the search query, incorporating language as a filter.
 	joinedSearchWords := strings.Join(searchWords, " ")
+	searchQuery := joinedSearchWords
+
+	if language != "" {
+		searchQuery += fmt.Sprintf(" language:%s", language)
+	}
 
 	variables := map[string]interface{}{
-		"search": graphql.String(joinedSearchWords),
+		"search": graphql.String(searchQuery),
 	}
 
 	var q query
